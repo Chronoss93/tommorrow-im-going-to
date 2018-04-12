@@ -1,0 +1,109 @@
+//for spring boot plugin
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE")
+    }
+
+}
+
+plugins {
+    id 'net.ltgt.apt' version '0.10'
+    id "org.asciidoctor.convert" version "1.5.3"
+}
+
+group 'com.kravchenko'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'org.asciidoctor.convert'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web") {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    compile "org.springframework.boot:spring-boot-starter-web-services"
+    compile "org.springframework.data:spring-data-mongodb"
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+
+    compile "org.springframework.restdocs:spring-restdocs-core"
+    compile "com.google.guava:guava:23.5-jre"
+
+    //lombok:
+    compile 'org.projectlombok:lombok:1.16.18'
+    apt "org.projectlombok:lombok:1.16.18"
+
+    //test:
+    testCompile "org.springframework.boot:spring-boot-starter-test"
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.assertj:assertj-core:3.8.0'
+    testCompile 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+    //documentation
+    testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testCompile "com.jayway.jsonpath:json-path"
+    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:1.2.3.RELEASE'
+}
+
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
+test {
+    outputs.dir snippetsDir
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    dependsOn test
+
+    backends = ['html5']
+    attributes = [
+            'source-highlighter': 'highlightjs',
+            'imagesdir'         : './images',
+            'toc'               : 'left',
+            'toclevels'         : 3,
+            'numbered'          : '',
+            'icons'             : 'font',
+            'setanchors'        : '',
+            'idprefix'          : '',
+            'idseparator'       : '-',
+            'docinfo1'          : '',
+            'safe-mode-unsafe'  : '',
+            'allow-uri-read'    : '',
+            'snippets'          : snippetsDir,
+            linkattrs           : true,
+            encoding            : 'utf-8'
+    ]
+}
+
+//create a single Jar with all dependencies
+jar {
+    dependsOn asciidoctor
+    manifest {
+        attributes "Implementation-Title": "Tomorrow-im-going-to"
+        attributes "Implementation-Version": version
+        attributes "Main-Class": "com.tgt.Application"
+    }
+
+    // set version for builded jar file
+    archiveName = 'app.jar'
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    from ("${asciidoctor.outputDir}/html5") {
+        into 'static/docs'
+    }
+}
