@@ -1,17 +1,3 @@
-server:
-  port: 8080
-  servlet-path: /api/v1
-spring:
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: tgt
-  jackson:
-    joda-date-time-format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
-    serialization:
-      write_dates_as_timestamps : false
-
 logging:
   level:
     org.springframework.web: DEBUG
