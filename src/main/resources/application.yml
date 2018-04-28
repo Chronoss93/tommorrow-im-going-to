@@ -15,5 +15,11 @@ endpoints:
   sensitive: false
   info:
     sensitive: false
+
+paypal:
+  client:
+    id: AZYHUao4NRB_-jSrPdp3fIPIqXDpZYutsEvfOCffHzsO4368OB6LAhPnNmAxB2kYiKWHt4XKl_v68iWn
+    secret: EM1Spygr2XI5R4DJXmsyKfli21yFjBZUelI-phzNpkEIgLf4U-TZPM181duk2kn3VP5PbL7s9Lsh436z
+
 #logging:
 #  file: payment-partners.log
