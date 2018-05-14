@@ -18,21 +18,10 @@ public class PaypalController {
         return payPalClient.executePaypalCall(payment);
     }
 
-    @PostMapping("/complete")
-    public Payment completePayment(@RequestBody CompletePaymentDto dto) throws ProcessingException {
-        return payPalClient.completePayment(dto.getPaymentId(), dto.getPayerId());
+    @GetMapping("/complete")
+    public CompletedPaymentDto completePaymentByRedirect(@RequestParam String paymentId, @RequestParam("PayerID") String payerId)
+            throws ProcessingException {
+        return payPalClient.completePayment(paymentId, payerId);
     }
-
-
-    @GetMapping("/success")
-    public String successUrl() {
-        return "sucess";
-    }
-
-    @GetMapping("/cancel")
-    public String cancelUrl() {
-        return "cancel";
-    }
-
 
 }

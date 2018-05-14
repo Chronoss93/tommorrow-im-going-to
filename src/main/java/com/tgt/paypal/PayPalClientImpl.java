@@ -45,7 +45,7 @@ public class PayPalClientImpl implements PayPalClient {
 
         RedirectUrls redirectUrls = new RedirectUrls();
         redirectUrls.setCancelUrl("http://localhost:8080/api/v1/paypal/cancel");
-        redirectUrls.setReturnUrl("http://localhost:8080/api/v1/paypal/success");
+        redirectUrls.setReturnUrl("http://localhost:8080/api/v1/paypal/complete");
 
         Payment payment = new Payment();
         payment.setIntent("sale");
@@ -74,7 +74,7 @@ public class PayPalClientImpl implements PayPalClient {
     }
 
     @Override
-    public Payment completePayment(String paymentId, String payerId) throws ProcessingException {
+    public CompletedPaymentDto completePayment(String paymentId, String payerId) throws ProcessingException {
         Payment payment = new Payment();
         payment.setId(paymentId);
         PaymentExecution paymentExecution = new PaymentExecution();
@@ -84,9 +84,9 @@ public class PayPalClientImpl implements PayPalClient {
             APIContext context = new APIContext(clientId, clientSecret, SANDBOX_MODE);
             Payment completedPayment = payment.execute(context, paymentExecution);
             log.debug("Completed PayPal payment:\n" + completedPayment);
-            return completedPayment;
+            return CompletedPaymentDto.of(completedPayment);
         } catch (PayPalRESTException e) {
-            throw new ProcessingException("Couldn't create payment. PayPal processing exception", e);
+            throw new ProcessingException("Couldn't finish payment. PayPal processing exception", e);
         }
     }
 

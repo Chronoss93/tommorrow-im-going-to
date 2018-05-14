@@ -9,5 +9,5 @@ public interface PayPalClient {
 
     String executePaypalCall(Payment payment) throws ProcessingException;
 
-    Payment completePayment(String paymentId, String payerId) throws ProcessingException;
+    CompletedPaymentDto completePayment(String paymentId, String payerId) throws ProcessingException;
 }
